@@ -6,7 +6,7 @@ from classes import MSClass
 # Constants
 NUM_STATS = 4
 STAT_MIN = 0
-STAT_MAX = 55
+STAT_MAX = 65
 SAVE_MIN = 0
 SAVE_MAX = 90
 
