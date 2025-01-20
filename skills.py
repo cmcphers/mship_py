@@ -113,6 +113,7 @@ class MSSkillBlock(QGroupBox):
         self.setCheckable(True)
         self.setChecked(False)
         self._charClass = MSClass.NO_CLASS
+        self._lastSkill = [MSSkill.NO_SKILL]*MAX_SKILLS
 
         # Create subwidgets
         v_main = QVBoxLayout()
@@ -232,15 +233,139 @@ class MSSkillBlock(QGroupBox):
         return self._cmb_sk5.isEnabled()
 
     def updateClass(self, cl: MSClass):
-        pass
+        self._lastSkill = [MSSkill.NO_SKILL]*MAX_SKILLS
+        self._cmb_sk1.setEnabled(False)
+        self._cmb_sk2.setEnabled(False)
+        self._cmb_sk3.setEnabled(False)
+        self._cmb_sk4.setEnabled(False)
+        self._cmb_sk5.setEnabled(False)
+        self._cmb_sk1.blockSignals(True)
+        self._cmb_sk2.blockSignals(True)
+        self._cmb_sk3.blockSignals(True)
+        self._cmb_sk4.blockSignals(True)
+        self._cmb_sk5.blockSignals(True)
+
+        if cl == MSClass.MARINE:
+            # SK1 fixed as Military Training
+            self._cmb_sk1.clear()
+            self._cmb_sk1.addItem(Names[MSSkill.MILITARY_TRAINING], MSSkill.MILITARY_TRAINING)
+            # SK2 fixed as Athletics
+            self._cmb_sk2.clear()
+            self._cmb_sk2.addItem(Names[MSSkill.ATHLETICS], MSSkill.ATHLETICS)
+            # SK3 filled with all available trained and expert skills.
+            RemoveAll(MSSkillType.NA, self._cmb_sk3)
+            AddAll(MSSkillType.TRAINED, self._cmb_sk3, [MSSkill.MILITARY_TRAINING, MSSkill.ATHLETICS])
+            EnsurePostreqs([MSSkill.MILITARY_TRAINING, MSSkill.ATHLETICS], self._cmb_sk3)
+            # SK4 filled with all available trained skills.
+            RemoveAll(MSSkillType.NA, self._cmb_sk4)
+            AddAll(MSSkillType.TRAINED, self._cmb_sk4, [MSSkill.MILITARY_TRAINING, MSSkill.ATHLETICS])
+            RemoveAll(MSSkillType.NA, self._cmb_sk5)
+            self._cmb_sk3.setEnabled(True)
+            self._cmb_sk4.setEnabled(True)
+        elif cl == MSClass.ANDROID:
+            # SK1 fixed as Linguistics
+            self._cmb_sk1.clear()
+            self._cmb_sk1.addItem(Names[MSSkill.LINGUISTICS], MSSkill.LINGUISTICS)
+            # SK2 fixed as Computers
+            self._cmb_sk2.clear()
+            self._cmb_sk2.addItem(Names[MSSkill.COMPUTERS], MSSkill.COMPUTERS)
+            # SK3 fixed as Mathematics
+            self._cmb_sk3.clear()
+            self._cmb_sk3.addItem(Names[MSSkill.MATHEMATICS], MSSkill.MATHEMATICS)
+            # SK4 filled with all available trained and expert skills.
+            RemoveAll(MSSkillType.NA, self._cmb_sk4)
+            AddAll(MSSkillType.TRAINED, self._cmb_sk4, [MSSkill.LINGUISTICS, MSSkill.COMPUTERS,
+                                                        MSSkill.MATHEMATICS])
+            EnsurePostreqs([MSSkill.LINGUISTICS, MSSkill.COMPUTERS, MSSkill.MATHEMATICS], self._cmb_sk4)
+            # SK5 filled with all available trained skills.
+            RemoveAll(MSSkillType.NA, self._cmb_sk5)
+            AddAll(MSSkillType.TRAINED, self._cmb_sk5, [MSSkill.LINGUISTICS, MSSkill.COMPUTERS,
+                                                        MSSkill.MATHEMATICS])
+            # Enable SK4 and SK5
+            self._cmb_sk4.setEnabled(True)
+            self._cmb_sk5.setEnabled(True)
+        elif cl == MSClass.SCIENTIST:
+            # Fill SK1 with all master skills
+            RemoveAll(MSSkillType.NA, self._cmb_sk1)
+            AddAll(MSSkillType.MASTER, self._cmb_sk1)
+            # Ensure SK2, SK3, and SK5 are empty.
+            RemoveAll(MSSkillType.NA, self._cmb_sk2)
+            RemoveAll(MSSkillType.NA, self._cmb_sk3)
+            RemoveAll(MSSkillType.NA, self._cmb_sk5)
+            # Fill SK4 with all trained skills.
+            RemoveAll(MSSkillType.NA, self._cmb_sk4)
+            AddAll(MSSkillType.TRAINED, self._cmb_sk4)
+            # Enable SK1 only.
+            self._cmb_sk1.setEnabled(True)
+        elif cl == MSClass.TEAMSTER:
+            # SK1 fixed as Industrial Equipment
+            self._cmb_sk1.clear()
+            self._cmb_sk1.addItem(Names[MSSkill.INDUSTRIAL_EQUIPMENT], MSSkill.INDUSTRIAL_EQUIPMENT)
+            # SK2 fixed as Zero-G
+            self._cmb_sk2.clear()
+            self._cmb_sk2.addItem(Names[MSSkill.ZERO_G], MSSkill.ZERO_G)
+            # SK3 filled with all available trained skills.
+            RemoveAll(MSSkillType.NA, self._cmb_sk3)
+            AddAll(MSSkillType.TRAINED, self._cmb_sk3, [MSSkill.INDUSTRIAL_EQUIPMENT, MSSkill.ZERO_G])
+            # SK4 filled with all available expert skills.
+            RemoveAll(MSSkillType.NA, self._cmb_sk4)
+            EnsurePostreqs([MSSkill.INDUSTRIAL_EQUIPMENT, MSSkill.ZERO_G], self._cmb_sk4)
+            # Enable SK3 and SK4
+            self._cmb_sk3.setEnabled(True)
+            self._cmb_sk4.setEnabled(True)
+        else:
+            RemoveAll(MSSkillType.NA, self._cmb_sk1)
+            RemoveAll(MSSkillType.NA, self._cmb_sk2)
+            RemoveAll(MSSkillType.NA, self._cmb_sk3)
+            RemoveAll(MSSkillType.NA, self._cmb_sk4)
+            RemoveAll(MSSkillType.NA, self._cmb_sk5)
+        self._charClass = cl
+        if not self.isChecked():
+            self.setChecked(True)
+            self.setChecked(False)
+        # Re-enable signals.
+        self._cmb_sk1.blockSignals(False)
+        self._cmb_sk2.blockSignals(False)
+        self._cmb_sk3.blockSignals(False)
+        self._cmb_sk4.blockSignals(False)
+        self._cmb_sk5.blockSignals(False)
 
     @pyqtSlot(str)
     def _onSK1Changed(self, sk: str):
-        pass
+        if self._cmb_sk1.count() == 0:
+            self._lastSkill[0] = MSSkill.NO_SKILL
+            return
+        else:
+            id = self._cmb_sk1.currentData()
+        if self._charClass == MSClass.SCIENTIST:
+            EnsurePrereqs(id, self._cmb_sk2, True)
+        if id > 0:
+            self._cmb_sk2.setEnabled(True)
+            if not self.isChecked():
+                self.setChecked(True)
+                self.setChecked(False)
 
     @pyqtSlot(str)
     def _onSK2Changed(self, sk: str):
-        pass
+        if self._cmb_sk2.count() == 0:
+            self._lastSkill[1] = MSSkill.NO_SKILL
+            return
+        else:
+            id = self._cmb_sk2.currentData()
+        if self._charClass == MSClass.SCIENTIST:
+            id4 = self._cmb_sk4.currentData()  # Get trained skill we need to not double-count
+            # Ensure SK3 has all prereqs for this skill.
+            EnsurePrereqs(id, self._cmb_sk3, True)
+            if id4 > 0:
+                i = self._cmb_sk3.findData(id4)
+                if i >= 0:
+                    self._cmb_sk3.removeItem(i)
+            if id > 0:
+                self._cmb_sk3.setEnabled(True)
+                if not self.isChecked():
+                    self.setChecked(True)
+                    self.setChecked(False)
+            
 
     @pyqtSlot(str)
     def _onSK3Changed(self, sk: str):
@@ -264,9 +389,13 @@ def InsertSkill(sk: MSSkill, cmb: QComboBox):
         cmb.addItem(Names[sk], sk)
 
 # Ensures that the given combo box contains all prereqs for the given skill
-def EnsurePrereqs(sk: MSSkill, cmb: QComboBox, exclusive: bool = False):
+def EnsurePrereqs(sk: MSSkill | list[MSSkill], cmb: QComboBox, exclusive: bool = False):
+    if type(sk) is MSSkill:
+        sk = [sk]
     for i in range(1, len(MSSkill)):
-        is_prereq = IsPrereq(MSSkill(i), sk)
+        is_prereq = False
+        for s in sk:
+            is_prereq |= IsPrereq(MSSkill(i), s)
         idx = cmb.findData(MSSkill(i))
         if idx >= 0:
             if exclusive and not is_prereq:
@@ -275,9 +404,13 @@ def EnsurePrereqs(sk: MSSkill, cmb: QComboBox, exclusive: bool = False):
             InsertSkill(MSSkill(i), cmb)
 
 # Ensures that the given combo box contains all postreqs for the given skill.
-def EnsurePostreqs(sk: MSSkill, cmb: QComboBox, exclusive: bool = False):
+def EnsurePostreqs(sk: MSSkill | list[MSSkill], cmb: QComboBox, exclusive: bool = False):
+    if type(sk) is MSSkill:
+        sk = [sk]
     for i in range(1, len(MSSkill)):
-        is_postreq = IsPostreq(MSSkill(i), sk)
+        is_postreq = False
+        for s in sk:
+            is_postreq |= IsPostreq(MSSkill(i), s)
         idx = cmb.findData(MSSkill(i))
         if idx >= 0:
             if exclusive and not is_postreq:
@@ -286,9 +419,11 @@ def EnsurePostreqs(sk: MSSkill, cmb: QComboBox, exclusive: bool = False):
             InsertSkill(MSSkill(i), cmb)
 
 # Adds all skills of a given type to the combo box.
-def AddAll(t: MSSkillType, cmb: QComboBox):
+def AddAll(t: MSSkillType, cmb: QComboBox, exceptions: list[MSSkill] | None = None):
+    if exceptions is None:
+        exceptions = []
     for i in range(len(MSSkill)):
-        if t == MSSkillType.NA or Types[i] == t:
+        if t == MSSkillType.NA or Types[i] == t and MSSkill(i) not in exceptions:
             cmb.addItem(Names[i], MSSkill(i))
 
 # Removes all skills of a given type from the combo box.
@@ -306,17 +441,7 @@ def RemoveAll(t: MSSkillType, cmb: QComboBox):
 
 # Checks if skill 1 is a prerequisite for skill 2
 def IsPrereq(sk1: MSSkill, sk2: MSSkill) -> bool:
-    for i in range(len(Prereqs[sk2])):
-        if sk1 == Prereqs[sk2][i]:
-            break
-    else:
-        return False
-    return True
+    return sk1 in Prereqs[sk2]
 
 def IsPostreq(sk1: MSSkill, sk2: MSSkill) -> bool:
-    for i in range(len(Postreqs[sk2])):
-        if sk1 == Postreqs[sk2][i]:
-            break
-    else:
-        return False
-    return True
+    return sk1 in Postreqs[sk2]
