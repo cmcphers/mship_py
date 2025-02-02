@@ -369,15 +369,93 @@ class MSSkillBlock(QGroupBox):
 
     @pyqtSlot(str)
     def _onSK3Changed(self, sk: str):
-        pass
+        if self._cmb_sk3.count() == 0:
+            self._lastSkill[2] = MSSkill.NO_SKILL
+            return
+        else:
+            id = self._cmb_sk3.currentData()
+
+        if self._charClass == MSClass.MARINE or self._charClass == MSClass.SCIENTIST:
+            if Types[id] == MSSkillType.EXPERT:
+                self._cmb_sk4.setCurrentIndex(0)
+                self._cmb_sk4.setEnabled(False)
+            else:
+                # Remove new selection from sk4.
+                self._cmb_sk4.removeItem(self._cmb_sk4.findData(id))
+                # Add back previous if it wasn't an expert skill.
+                if Types[self._lastSkill[2]] == MSSkillType.TRAINED:
+                    InsertSkill(self._lastSkill[2], self._cmb_sk4)
+                # Ensure that sk4 is enabled.
+                self._cmb_sk4.setEnabled(True)
+                if not self.isChecked():
+                    self.setChecked(True)
+                    self.setChecked(False)
+        elif self._charClass == MSClass.TEAMSTER:
+            id1 = self._cmb_sk1.currentData()
+            id2 = self._cmb_sk2.currentData()
+            # Ensure that sk4 only has postreqs for sk1, sk2, and sk3.
+            EnsurePostreqs([id, id1, id2], self._cmb_sk4, True)
+        self._lastSkill[2] = id
 
     @pyqtSlot(str)
     def _onSK4Changed(self, sk: str):
-        pass
+        if self._cmb_sk4.count() == 0:
+            self._lastSkill[3] = MSSkill.NO_SKILL
+            return
+        else:
+            id = self._cmb_sk4.currentData()
+
+        if self._charClass == MSClass.MARINE:
+            # Remove new selection from sk3
+            if id > 0:
+                self._cmb_sk3.removeItem(self._cmb_sk3.findData(id))
+            # Add back previous selection if it was a trained skill.
+            if Types[self._lastSkill[3]] == MSSkillType.TRAINED:
+                InsertSkill(self._lastSkill[3], self._cmb_sk3)
+        elif self._charClass == MSClass.SCIENTIST:
+            # Remove new selection from sk3.
+            if id > 0:
+                idx = self._cmb_sk3.findData(id)
+                if idx > 0:
+                    self._cmb_sk3.removeItem(idx)
+            # Add back previous if it was another prerequisite to sk2.
+            id2 = self._cmb_sk2.currentData()
+            if IsPrereq(self._last_skill[3], id2):
+                InsertSkill(self._last_skill[3], self._cmb_sk3)
+        elif self._charClass == MSClass.ANDROID:
+            # Same as marine for sk3 changed, but with sk4 and sk5.
+            if Types[id] == MSSkillType.EXPERT:
+                self._cmb_sk5.setCurrentIndex(0)
+                self._cmb_sk5.setEnabled(False)
+            else:
+                # Remove the new selection from sk5
+                self._cmb_sk5.removeItem(self._cmb_sk5.findData(id))
+                # Add back the previous skill if it was trained.
+                if Types[self._lastSkill[3]] == MSSkillType.TRAINED:
+                    InsertSkill(self._lastSkill[3], self._cmb_sk5)
+                # Ensure sk5 is enabled.
+                self._cmb_sk5.setEnabled(True)
+                if not self.isChecked():
+                    self.setEnabled(True)
+                    self.setEnabled(False)
+        self._lastSkill[3] = id
 
     @pyqtSlot(str)
     def _onSK5Changed(self, sk: str):
-        pass
+        # Do nothing if the drop-down is cleared
+        if self._cmb_sk5.count() == 0:
+            self._lastSkill[4] = MSSkill.NO_SKILL
+            return
+        else:
+            id = self._cmb_sk5.currentData()
+
+        if self._charClass == MSClass.ANDROID:
+            # Remove selection from sk4
+            self._cmb_sk4.removeItem(self._cmb_sk4.findData(id))
+            # Add back previous skill
+            if Types[self._lastSkill[4]] == MSSkillType.TRAINED:
+                InsertSkill(self._lastSkill[4], self._cmb_sk4)
+        self._lastSkill[4] = id
 
 # Inserts the given skill into the combo box, maintaining order by the MSSkill enum value.
 def InsertSkill(sk: MSSkill, cmb: QComboBox):

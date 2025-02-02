@@ -26,8 +26,8 @@ Trauma = ["N/A",
 Wounds = [0, 3, 3, 2, 2]
 
 class MSClassBlock(QGroupBox):
-    classChanged = pyqtSignal(int)
-    modStatChanged = pyqtSignal(int)
+    classChanged = pyqtSignal(MSClass, stats.MSStat)
+    modStatChanged = pyqtSignal(MSClass, stats.MSStat)
 
     def __init__(self, parent):
         super(MSClassBlock, self).__init__(parent)
@@ -48,7 +48,7 @@ class MSClassBlock(QGroupBox):
         self._cmb_modstat = QComboBox()
         for key in stats.MSStat:
             self._cmb_modstat.addItem(stats.Names[key], key)
-        self._cmb_modstat.currentIndexChanged.connect(self.modStatChanged)
+        self._cmb_modstat.currentIndexChanged.connect(self._onstch)
         self._spin_health = QSpinBox()
         self._spin_health.setMinimum(HEALTH_MIN)
         self._spin_health.setMaximum(HEALTH_MAX)
@@ -82,7 +82,11 @@ class MSClassBlock(QGroupBox):
     def _onclch(self, v: int):
         self._cmb_trauma.setCurrentIndex(v)
         self._spin_wounds.setValue(Wounds[v])
-        self.classChanged.emit()
+        self.classChanged.emit(MSClass(v), self._cmb_modstat.currentData())
+
+    @pyqtSlot(int)
+    def _onstsch(self, v: int):
+        self.modStatChanged.emit(self._cmb_class.currentData(), stats.MSStat(v))
 
     def setClass(self, cl: MSClass):
         self._cmb_class.setCurrentIndex(cl)
