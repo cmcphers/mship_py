@@ -1,10 +1,10 @@
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout,
                              QWidget)
-import classes
-import equipment
-import stats
-import skills
+from classes import (MSClassBlock, MSClass)
+from equipment import MSEquipmentBlock
+from stats import (MSStatBlock, MSSaveBlock, MSStat)
+from skills import (MSSkill, MSSkillBlock)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -30,17 +30,17 @@ class MainWindow(QMainWindow):
         g_top.addWidget(self._btn_generate, 1, 3)
 
         self._h_statSave = QHBoxLayout()
-        self._statBlock = stats.MSStatBlock(self._h_statSave)
-        self._saveBlock = stats.MSSaveBlock(self._h_statSave)
+        self._statBlock = MSStatBlock()
+        self._saveBlock = MSSaveBlock()
         self._h_statSave.addWidget(self._statBlock)
         self._h_statSave.addWidget(self._saveBlock)
 
-        self._classBlock = classes.MSClassBlock(self._v_main)
+        self._classBlock = MSClassBlock()
         self._classBlock.classChanged.connect(self._onClassChanged)
 
-        self._skillBlock = skills.MSSkillBlock(self._v_main)
+        self._skillBlock = MSSkillBlock()
 
-        self._equipmentBlock = equipment.MSEquipmentBlock(self._v_main)
+        self._equipmentBlock = MSEquipmentBlock()
 
         self._v_main.addLayout(g_top)
         self._v_main.addLayout(self._h_statSave)
@@ -56,12 +56,12 @@ class MainWindow(QMainWindow):
         pass
 
     @pyqtSlot()
-    def _onClassChanged(self, cl: classes.MSClass, st: stats.MSStat):
+    def _onClassChanged(self, cl: MSClass, st: MSStat):
         self._equipmentBlock.updateClass(cl)
         self._statBlock.updateClass(cl, st)
         self._saveBlock.updateClass(cl)
         self._skillBlock.updateClass(cl)
 
     @pyqtSlot()
-    def _onModStatChanged(self, cl: classes.MSClass, st: stats.MSStat):
+    def _onModStatChanged(self, cl: MSClass, st: MSStat):
         self._statBlock.updateClass(cl, st)

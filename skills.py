@@ -56,7 +56,7 @@ class MSSkillType(IntEnum):
     EXPERT = 2
     MASTER = 3
 
-Names = ["--Select Skill--","Linguistics","Zoology","Botany","Geology","Industrial Eqpt.","Jury Rigging",
+SkillNames = ["--Select Skill--","Linguistics","Zoology","Botany","Geology","Industrial Eqpt.","Jury Rigging",
            "Chemistry","Computers","Zero-G","Mathematics","Art","Archaeology",
            "Theology","Mil. Training","Rimwise","Athletics","Psychology","Pathology",
            "Field Medicine","Ecology","Asteroid Mining","Mech. Repair","Explosives","Pharmacology",
@@ -108,7 +108,7 @@ ID = [MSSkill.NO_SKILL, MSSkill.LINGUISTICS, MSSkill.ZOOLOGY, MSSkill.BOTANY, MS
 
 
 class MSSkillBlock(QGroupBox):
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(MSSkillBlock, self).__init__(parent)
         self.setCheckable(True)
         self.setChecked(False)
@@ -119,20 +119,20 @@ class MSSkillBlock(QGroupBox):
         v_main = QVBoxLayout()
         h_top = QHBoxLayout()
         self._cmb_sk1 = QComboBox()
-        self._cmb_sk1.addItem(Names[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
+        self._cmb_sk1.addItem(SkillNames[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
         self._cmb_sk1.currentTextChanged.connect(self._onSK1Changed)
         self._cmb_sk2 = QComboBox()
-        self._cmb_sk2.addItem(Names[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
-        self._cmb_sk2.currentTextChanged.connect(self._onSK2changed)
+        self._cmb_sk2.addItem(SkillNames[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
+        self._cmb_sk2.currentTextChanged.connect(self._onSK2Changed)
         self._cmb_sk3 = QComboBox()
-        self._cmb_sk3.addItem(Names[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
+        self._cmb_sk3.addItem(SkillNames[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
         self._cmb_sk3.currentTextChanged.connect(self._onSK3Changed)
         h_bot = QHBoxLayout()
         self._cmb_sk4 = QComboBox()
-        self._cmb_sk4.addItem(Names[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
+        self._cmb_sk4.addItem(SkillNames[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
         self._cmb_sk4.currentTextChanged.connect(self._onSK4Changed)
         self._cmb_sk5 = QComboBox()
-        self._cmb_sk5.addItem(Names[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
+        self._cmb_sk5.addItem(SkillNames[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
         self._cmb_sk5.currentTextChanged.connect(self._onSK5Changed)
 
         # Lay everything out
@@ -248,10 +248,10 @@ class MSSkillBlock(QGroupBox):
         if cl == MSClass.MARINE:
             # SK1 fixed as Military Training
             self._cmb_sk1.clear()
-            self._cmb_sk1.addItem(Names[MSSkill.MILITARY_TRAINING], MSSkill.MILITARY_TRAINING)
+            self._cmb_sk1.addItem(SkillNames[MSSkill.MILITARY_TRAINING], MSSkill.MILITARY_TRAINING)
             # SK2 fixed as Athletics
             self._cmb_sk2.clear()
-            self._cmb_sk2.addItem(Names[MSSkill.ATHLETICS], MSSkill.ATHLETICS)
+            self._cmb_sk2.addItem(SkillNames[MSSkill.ATHLETICS], MSSkill.ATHLETICS)
             # SK3 filled with all available trained and expert skills.
             RemoveAll(MSSkillType.NA, self._cmb_sk3)
             AddAll(MSSkillType.TRAINED, self._cmb_sk3, [MSSkill.MILITARY_TRAINING, MSSkill.ATHLETICS])
@@ -265,13 +265,13 @@ class MSSkillBlock(QGroupBox):
         elif cl == MSClass.ANDROID:
             # SK1 fixed as Linguistics
             self._cmb_sk1.clear()
-            self._cmb_sk1.addItem(Names[MSSkill.LINGUISTICS], MSSkill.LINGUISTICS)
+            self._cmb_sk1.addItem(SkillNames[MSSkill.LINGUISTICS], MSSkill.LINGUISTICS)
             # SK2 fixed as Computers
             self._cmb_sk2.clear()
-            self._cmb_sk2.addItem(Names[MSSkill.COMPUTERS], MSSkill.COMPUTERS)
+            self._cmb_sk2.addItem(SkillNames[MSSkill.COMPUTERS], MSSkill.COMPUTERS)
             # SK3 fixed as Mathematics
             self._cmb_sk3.clear()
-            self._cmb_sk3.addItem(Names[MSSkill.MATHEMATICS], MSSkill.MATHEMATICS)
+            self._cmb_sk3.addItem(SkillNames[MSSkill.MATHEMATICS], MSSkill.MATHEMATICS)
             # SK4 filled with all available trained and expert skills.
             RemoveAll(MSSkillType.NA, self._cmb_sk4)
             AddAll(MSSkillType.TRAINED, self._cmb_sk4, [MSSkill.LINGUISTICS, MSSkill.COMPUTERS,
@@ -300,10 +300,10 @@ class MSSkillBlock(QGroupBox):
         elif cl == MSClass.TEAMSTER:
             # SK1 fixed as Industrial Equipment
             self._cmb_sk1.clear()
-            self._cmb_sk1.addItem(Names[MSSkill.INDUSTRIAL_EQUIPMENT], MSSkill.INDUSTRIAL_EQUIPMENT)
+            self._cmb_sk1.addItem(SkillNames[MSSkill.INDUSTRIAL_EQUIPMENT], MSSkill.INDUSTRIAL_EQUIPMENT)
             # SK2 fixed as Zero-G
             self._cmb_sk2.clear()
-            self._cmb_sk2.addItem(Names[MSSkill.ZERO_G], MSSkill.ZERO_G)
+            self._cmb_sk2.addItem(SkillNames[MSSkill.ZERO_G], MSSkill.ZERO_G)
             # SK3 filled with all available trained skills.
             RemoveAll(MSSkillType.NA, self._cmb_sk3)
             AddAll(MSSkillType.TRAINED, self._cmb_sk3, [MSSkill.INDUSTRIAL_EQUIPMENT, MSSkill.ZERO_G])
@@ -461,10 +461,10 @@ class MSSkillBlock(QGroupBox):
 def InsertSkill(sk: MSSkill, cmb: QComboBox):
     for i in range(cmb.count()):
         if cmb.itemData(i) > sk:
-            cmb.insertItem(i, Names[sk], sk)
+            cmb.insertItem(i, SkillNames[sk], sk)
             break
     else:
-        cmb.addItem(Names[sk], sk)
+        cmb.addItem(SkillNames[sk], sk)
 
 # Ensures that the given combo box contains all prereqs for the given skill
 def EnsurePrereqs(sk: MSSkill | list[MSSkill], cmb: QComboBox, exclusive: bool = False):
@@ -502,13 +502,13 @@ def AddAll(t: MSSkillType, cmb: QComboBox, exceptions: list[MSSkill] | None = No
         exceptions = []
     for i in range(len(MSSkill)):
         if t == MSSkillType.NA or Types[i] == t and MSSkill(i) not in exceptions:
-            cmb.addItem(Names[i], MSSkill(i))
+            cmb.addItem(SkillNames[i], MSSkill(i))
 
 # Removes all skills of a given type from the combo box.
 def RemoveAll(t: MSSkillType, cmb: QComboBox):
     if t == MSSkillType.NA:
         cmb.clear()
-        cmb.addItem(Names[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
+        cmb.addItem(SkillNames[MSSkill.NO_SKILL], MSSkill.NO_SKILL)
     else:
         i = 1
         while i < cmb.count():

@@ -1,7 +1,6 @@
 from enum import IntEnum
 from PyQt5.QtCore import (pyqtSignal, pyqtSlot)
 from PyQt5.QtWidgets import (QComboBox, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QSpinBox, QVBoxLayout)
-import stats
 
 NUM_CLASSES = 5
 HEALTH_MIN = 0
@@ -16,7 +15,7 @@ class MSClass(IntEnum):
     SCIENTIST = 3
     TEAMSTER = 4
 
-Names = ["-- Select Class --", "Marine", "Android", "Scientist", "Teamster"]
+ClassNames = ["-- Select Class --", "Marine", "Android", "Scientist", "Teamster"]
 Trauma = ["N/A",
                 "Whenever you panic, every close friendly player must make a fear save.",
                 "Fear saves made by close friendly players are at disadvantage.",
@@ -25,11 +24,13 @@ Trauma = ["N/A",
 
 Wounds = [0, 3, 3, 2, 2]
 
-class MSClassBlock(QGroupBox):
-    classChanged = pyqtSignal(MSClass, stats.MSStat)
-    modStatChanged = pyqtSignal(MSClass, stats.MSStat)
+from stats import (MSStat, StatNames)
 
-    def __init__(self, parent):
+class MSClassBlock(QGroupBox):
+    classChanged = pyqtSignal(MSClass, MSStat)
+    modStatChanged = pyqtSignal(MSClass, MSStat)
+
+    def __init__(self, parent=None):
         super(MSClassBlock, self).__init__(parent)
         self.setCheckable(True)
         self.setChecked(False)
@@ -43,11 +44,11 @@ class MSClassBlock(QGroupBox):
         lbl_wounds = QLabel("Max Wounds")
         self._cmb_class = QComboBox()
         for key in MSClass:
-            self._cmb_class.addItem(Names[key], key)
+            self._cmb_class.addItem(ClassNames[key], key)
         self._cmb_class.currentIndexChanged.connect(self._onclch)
         self._cmb_modstat = QComboBox()
-        for key in stats.MSStat:
-            self._cmb_modstat.addItem(stats.Names[key], key)
+        for key in MSStat:
+            self._cmb_modstat.addItem(StatNames[key], key)
         self._cmb_modstat.currentIndexChanged.connect(self._onstch)
         self._spin_health = QSpinBox()
         self._spin_health.setMinimum(HEALTH_MIN)
@@ -85,8 +86,8 @@ class MSClassBlock(QGroupBox):
         self.classChanged.emit(MSClass(v), self._cmb_modstat.currentData())
 
     @pyqtSlot(int)
-    def _onstsch(self, v: int):
-        self.modStatChanged.emit(self._cmb_class.currentData(), stats.MSStat(v))
+    def _onstch(self, v: int):
+        self.modStatChanged.emit(self._cmb_class.currentData(), MSStat(v))
 
     def setClass(self, cl: MSClass):
         self._cmb_class.setCurrentIndex(cl)
@@ -94,10 +95,10 @@ class MSClassBlock(QGroupBox):
     def getClass(self) -> MSClass:
         return self._cmb_class.currentData()
 
-    def setModStat(self, st: stats.MSStat):
+    def setModStat(self, st: MSStat):
         self._cmb_modstat.setCurrentIndex(st)
 
-    def getModStat(self) -> stats.MSStat:
+    def getModStat(self) -> MSStat:
         return self._cmb_modstat.currentData()
 
     def setHealth(self, v: int):

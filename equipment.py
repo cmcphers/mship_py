@@ -6,7 +6,7 @@ import patches
 import loadouts
 
 class MSEquipmentBlock(QGroupBox):
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(MSEquipmentBlock, self).__init__(parent)
         self.setCheckable(True)
         self.setChecked(False)
@@ -16,7 +16,7 @@ class MSEquipmentBlock(QGroupBox):
         lbl_loadout = QLabel("Loadout")
         self._cmb_loadout = QComboBox()
         for i in range(len(loadouts.NoClass)):
-            self._cmb_loadout.addItem(loadouts.NoClass, loadouts.NoClassAP)
+            self._cmb_loadout.addItem(loadouts.NoClass[0], loadouts.NoClassAP[0])
         self._cmb_loadout.currentIndexChanged.connect(self.onLoadoutChanged)
         lbl_trinket = QLabel("Trinket")
         self._cmb_trinket = QComboBox()
@@ -36,11 +36,11 @@ class MSEquipmentBlock(QGroupBox):
 
         # Lay everything out
         g_main.addWidget(lbl_loadout, 0, 0)
-        g_main.addWidget(self._cmb_loadout, 0, 1, rowSpan=0, columnSpan=3)
+        g_main.addWidget(self._cmb_loadout, 0, 1, 1, 3)
         g_main.addWidget(lbl_trinket, 1, 0)
-        g_main.addWidget(self._cmb_trinket, 1, 1, rowSpan=0, columnSpan=3)
+        g_main.addWidget(self._cmb_trinket, 1, 1, 1, 3)
         g_main.addWidget(lbl_patch, 2, 0)
-        g_main.addWidget(self._cmb_patch, 2, 1, rowSpan=0, columnSpan=3)
+        g_main.addWidget(self._cmb_patch, 2, 1, 1, 3)
         g_main.addWidget(lbl_armor, 3, 0)
         g_main.addWidget(self._spin_armor, 3, 1)
         g_main.addWidget(lbl_credits, 4, 0)

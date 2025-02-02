@@ -1,7 +1,6 @@
 from enum import IntEnum
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import (QGridLayout, QGroupBox, QLabel, QSpinBox)
-from classes import MSClass
 
 # Constants
 NUM_STATS = 4
@@ -26,10 +25,11 @@ Fear = [0, 20, 60, 0, 10]
 Body = [0, 10, 0, 0, 10]
 Mod = [0, 0, -10, 5, 0]
 
-Names = ["Strength", "Speed", "Intellect", "Combat"]
+StatNames = ["Strength", "Speed", "Intellect", "Combat"]
 
-ID = [MSStat.STRENGTH, MSStat.SPEED, MSStat.INTELLECT, MSStat.COMBAT]
+StatID = [MSStat.STRENGTH, MSStat.SPEED, MSStat.INTELLECT, MSStat.COMBAT]
 
+from classes import MSClass
 
 # Stat block to hold character stats.
 class MSStatBlock(QGroupBox):
@@ -38,7 +38,7 @@ class MSStatBlock(QGroupBox):
     intChanged = pyqtSignal(int)
     combatChanged = pyqtSignal(int)
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(MSStatBlock, self).__init__(parent)
         self.setCheckable(True)
         self.setChecked(False)
@@ -96,7 +96,7 @@ class MSStatBlock(QGroupBox):
         g_main.addWidget(self._spin_adjStr, 2, 1)
         g_main.addWidget(self._spin_adjSpeed, 2, 2)
         g_main.addWidget(self._spin_adjInt, 2, 3)
-        g_main.addWidget(self._spin_combat, 2, 4)
+        g_main.addWidget(self._spin_adjCombat, 2, 4)
         self.setLayout(g_main)
 
     def setStr(self, v: int, base: bool = False):
@@ -180,7 +180,7 @@ class MSSaveBlock(QGroupBox):
     fearChanged = pyqtSignal(int)
     bodyChanged = pyqtSignal(int)
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(MSSaveBlock, self).__init__(parent)
         self.setCheckable(True)
         self.setChecked(False)
@@ -225,7 +225,7 @@ class MSSaveBlock(QGroupBox):
         g_main.addWidget(lbl_adj, 2, 0)
         g_main.addWidget(self._spin_adjSanity, 2, 1)
         g_main.addWidget(self._spin_adjFear, 2, 2)
-        g_main.addWidget(self.sipn_adjBody, 2, 3)
+        g_main.addWidget(self._spin_adjBody, 2, 3)
         self.setLayout(g_main)
 
     def setSanity(self, v: int, base: bool = False):
