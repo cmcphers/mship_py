@@ -33,6 +33,7 @@ class MSEquipmentBlock(QGroupBox):
         lbl_credits = QLabel("Credits")
         self._spin_credits = QSpinBox()
         self._spin_credits.setMinimum(0)
+        self._spin_credits.setMaximum(10000)
 
         # Lay everything out
         g_main.addWidget(lbl_loadout, 0, 0)
@@ -73,3 +74,33 @@ class MSEquipmentBlock(QGroupBox):
         else:
             for i in range(len(loadouts.NoClass)):
                 self._cmb_loadout.addItem(loadouts.NoClass[i], loadouts.NoClassAP[i])
+
+    def setLoadout(self, i: int):
+        if i < 0 or i > self._cmb_loadout.count():
+            raise IndexError("Index out of range for number of loadouts")
+        self._cmb_loadout.setCurrentIndex(i)
+
+    def getNumLoadouts(self) -> int:
+        return self._cmb_loadout.count()
+
+    def setTrinket(self, i: int):
+        if i < 0 or i > self._cmb_trinket.count():
+            raise IndexError("Index out of range for number of trinkets")
+        self._cmb_trinket.setCurrentIndex(i)
+
+    def getNumTrinkets(self) -> int:
+        return self._cmb_trinket.count()
+
+    def setPatch(self, i: int):
+        if i < 0 or i > self._cmb_patch.count():
+            raise IndexError("Index out of range for number of patches")
+        self._cmb_patch.setCurrentIndex(i)
+
+    def getNumPatches(self) -> int:
+        return self._cmb_patch.count()
+
+    def setCredits(self, v: int):
+        if v < self._spin_credits.minimum() or v > self._spin_credits.maximum():
+            raise ValueError("Number of credits is out of range [{0}, {1}]".format(self._spin_credits.minimum(),
+                                                                                   self._spin_credits.maximum()))
+        self._spin_credits.setValue(v)

@@ -7,6 +7,7 @@ HEALTH_MIN = 0
 HEALTH_MAX = 20
 WOUNDS_MIN = 0
 WOUNDS_MAX  = 3
+HEALTH_BASE = 10
 
 class MSClass(IntEnum):
     NO_CLASS = 0

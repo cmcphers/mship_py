@@ -8,6 +8,8 @@ STAT_MIN = 0
 STAT_MAX = 65
 SAVE_MIN = 0
 SAVE_MAX = 90
+STAT_BASE = 25
+SAVE_BASE = 10
 
 
 class MSStat(IntEnum):
@@ -99,61 +101,61 @@ class MSStatBlock(QGroupBox):
         g_main.addWidget(self._spin_adjCombat, 2, 4)
         self.setLayout(g_main)
 
-    def setStr(self, v: int, base: bool = False):
+    def setStr(self, v: int, adj: bool = False):
         if v > STAT_MAX or v < STAT_MIN:
             raise ValueError("Value out of range [{0}, {1}]".format(STAT_MIN, STAT_MAX))
-        if base:
-            self._spin_str.setValue(v)
-        else:
+        if adj:
             self._spin_adjStr.setValue(v)
-
-    def getStr(self, base: bool = False) -> int:
-        if base:
-            return self._spin_str.value()
         else:
+            self._spin_str.setValue(v)
+
+    def getStr(self, adj: bool = False) -> int:
+        if adj:
             return self._spin_adjStr.value()
+        else:
+            return self._spin_str.value()
 
-    def setSpeed(self, v: int, base: bool = False):
+    def setSpeed(self, v: int, adj: bool = False):
         if v > STAT_MAX or v < STAT_MIN:
             raise ValueError("Value out of range [{0}, {1}]".format(STAT_MIN, STAT_MAX))
-        if base:
-            self._spin_speed.setValue(v)
-        else:
+        if adj:
             self._spin_adjSpeed.setValue(v)
-
-    def getSpeed(self, base: bool = False) -> int:
-        if base:
-            return self._spin_speed.value()
         else:
+            self._spin_speed.setValue(v)
+
+    def getSpeed(self, adj: bool = False) -> int:
+        if adj:
             return self._spin_adjSpeed.value()
+        else:
+            return self._spin_speed.value()
 
-    def setInt(self, v: int, base: bool = False):
+    def setInt(self, v: int, adj: bool = False):
         if v > STAT_MAX or v < STAT_MIN:
             raise ValueError("Value out of range [{0}, {1}]".format(STAT_MIN, STAT_MAX))
-        if base:
-            self._spin_int.setValue(v)
-        else:
+        if adj:
             self._spin_adjInt.setValue(v)
-
-    def getInt(self, base: bool = False) -> int:
-        if base:
-            return self._spin_int.value()
         else:
-            return self._spin_adjInt.value()
+            self._spin_int.setValue(v)
 
-    def setCombat(self, v: int, base: bool = False):
+    def getInt(self, adj: bool = False) -> int:
+        if adj:
+            return self._spin_adjInt.value()
+        else:
+            return self._spin_int.value()
+
+    def setCombat(self, v: int, adj: bool = False):
         if v > STAT_MAX or v < STAT_MIN:
             raise ValueError("Value out of range [{0}, {1}]".format(STAT_MIN, STAT_MAX))
-        if base:
-            self._spin_combat.setValue(v)
-        else:
+        if adj:
             self._spin_adjCombat.setValue(v)
-
-    def getCombat(self, base: bool = False) -> int:
-        if base:
-            return self._spin_combat.value()
         else:
+            self._spin_combat.setValue(v)
+
+    def getCombat(self, adj: bool = False) -> int:
+        if adj:
             return self._spin_adjCombat.value()
+        else:
+            return self._spin_combat.value()
 
     def updateClass(self, cl: MSClass, modstat: MSStat):
         new_str = self._spin_str.value() + Str[cl]
@@ -228,47 +230,47 @@ class MSSaveBlock(QGroupBox):
         g_main.addWidget(self._spin_adjBody, 2, 3)
         self.setLayout(g_main)
 
-    def setSanity(self, v: int, base: bool = False):
+    def setSanity(self, v: int, adj: bool = False):
         if v > SAVE_MAX or v < SAVE_MIN:
             raise ValueError("Value out of range [{0}, {1}]".format(STAT_MIN, STAT_MAX))
-        if base:
-            self._spin_sanity.setValue(v)
-        else:
+        if adj:
             self._spin_adjSanity.setValue(v)
-
-    def getSanity(self, base: bool = False) -> int:
-        if base:
-            return self._spin_sanity.value()
         else:
+            self._spin_sanity.setValue(v)
+
+    def getSanity(self, adj: bool = False) -> int:
+        if adj:
             return self._spin_adjSanity.value()
+        else:
+            return self._spin_sanity.value()
 
-    def setFear(self, v: int, base: bool = False):
+    def setFear(self, v: int, adj: bool = False):
         if v > SAVE_MAX or v < SAVE_MIN:
             raise ValueError("Value out of range [{0}, {1}]".format(STAT_MIN, STAT_MAX))
-        if base:
-            self._spin_fear.setValue(v)
-        else:
+        if adj:
             self._spin_adjFear.setValue(v)
-
-    def getFear(self, base: bool = False) -> int:
-        if base:
-            return self._spin_fear.value()
         else:
-            return self._spin_adjFear.value()
+            self._spin_fear.setValue(v)
 
-    def setBody(self, v: int, base: bool = False):
+    def getFear(self, adj: bool = False) -> int:
+        if adj:
+            return self._spin_adjFear.value()
+        else:
+            return self._spin_fear.value()
+
+    def setBody(self, v: int, adj: bool = False):
         if v > SAVE_MAX or v < SAVE_MIN:
             raise ValueError("Value out of range [{0}, {1}]".format(STAT_MIN, STAT_MAX))
-        if base:
-            self._spin_body.setValue(v)
-        else:
+        if adj:
             self._spin_adjBody.setValue(v)
-
-    def getBody(self, base: bool = False) -> int:
-        if base:
-            return self._spin_body.value()
         else:
+            self._spin_body.setValue(v)
+
+    def getBody(self, adj: bool = False) -> int:
+        if adj:
             return self._spin_adjBody.value()
+        else:
+            return self._spin_body.value()
 
     def updateClass(self, cl: MSClass):
         self._spin_adjSanity.setValue(self._spin_sanity.value() + Sanity[cl])

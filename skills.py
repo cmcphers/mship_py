@@ -164,6 +164,9 @@ class MSSkillBlock(QGroupBox):
     def getSkill1Enabled(self) -> bool:
         return self._cmb_sk1.isEnabled()
 
+    def getSkill1Range(self) -> int:
+        return self._cmb_sk1.count()
+
     def setSkill2(self, sk: int | str):
         if type(sk) is int:
             if sk >= self._cmb_sk2.count():
@@ -180,6 +183,9 @@ class MSSkillBlock(QGroupBox):
 
     def getSkill2Enabled(self) -> bool:
         return self._cmb_sk2.isEnabled()
+
+    def getSkill2Range(self) -> int:
+        return self._cmb_sk2.count()
 
     def setSkill3(self, sk: int | str):
         if type(sk) is int:
@@ -198,6 +204,9 @@ class MSSkillBlock(QGroupBox):
     def getSkill3Enabled(self) -> bool:
         return self._cmb_sk3.isEnabled()
 
+    def getSkill3Range(self) -> int:
+        return self._cmb_sk3.count()
+
     def setSkill4(self, sk: int | str):
         if type(sk) is int:
             if sk >= self._cmb_sk4.count():
@@ -215,6 +224,9 @@ class MSSkillBlock(QGroupBox):
     def getSkill4Enabled(self) -> bool:
         return self._cmb_sk4.isEnabled()
 
+    def getSkill4Range(self) -> int:
+        return self._cmb_sk4.count()
+
     def setSkill5(self, sk: int | str):
         if type(sk) is int:
             if sk >= self._cmb_sk5.count():
@@ -231,6 +243,9 @@ class MSSkillBlock(QGroupBox):
 
     def getSkill5Enabled(self) -> bool:
         return self._cmb_sk5.isEnabled()
+
+    def getSkill5Range(self) -> int:
+        return self._cmb_sk5.count()
 
     def updateClass(self, cl: MSClass):
         self._lastSkill = [MSSkill.NO_SKILL]*MAX_SKILLS
@@ -420,8 +435,8 @@ class MSSkillBlock(QGroupBox):
                     self._cmb_sk3.removeItem(idx)
             # Add back previous if it was another prerequisite to sk2.
             id2 = self._cmb_sk2.currentData()
-            if IsPrereq(self._last_skill[3], id2):
-                InsertSkill(self._last_skill[3], self._cmb_sk3)
+            if IsPrereq(self._lastSkill[3], id2):
+                InsertSkill(self._lastSkill[3], self._cmb_sk3)
         elif self._charClass == MSClass.ANDROID:
             # Same as marine for sk3 changed, but with sk4 and sk5.
             if Types[id] == MSSkillType.EXPERT:
